@@ -1,0 +1,10 @@
+services:
+  terraform:
+    image: hashicorp/terraform:1.12.2
+    container_name: terraform
+    volumes:
+      - type: bind
+        source: .
+        target: /terraform
+    env_file: env.toml
+    working_dir: /terraform
