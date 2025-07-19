@@ -1,6 +1,7 @@
 [build]
-publish   = "."
-functions = "netlify/functions"
+publish     = "."
+functions   = "netlify/functions"
+environment = { SECRETS_SCAN_OMIT_PATHS = "node_modules/aws-sdk/**" }
 
 [[redirects]]
 from   = "/api/*"
