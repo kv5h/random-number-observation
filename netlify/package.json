@@ -9,7 +9,12 @@
     "keywords": [],
     "author": "",
     "license": "ISC",
+    "dependencies": {
+        "aws-sdk": "^2.1650.0"
+    },
     "devDependencies": {
-        "typescript": "^5.0.0"
+        "typescript": "^5.0.0",
+        "@types/aws-lambda": "^8.10.138",
+        "@types/node": "^20.14.9"
     }
 }
