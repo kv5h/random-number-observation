@@ -6,3 +6,6 @@ functions = "netlify/functions"
 from   = "/api/*"
 to     = "/.netlify/functions/:splat"
 status = 200
+
+[functions]
+python_version = "3.13"
