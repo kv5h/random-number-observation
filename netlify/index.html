@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0" />
+        <title>Randomness Bias D Value using K-S Test</title>
+        <link
+            rel="stylesheet"
+            href="style.css" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Randomness Bias D Value Chart</h1>
+
+            <div class="filter-controls">
+                <label for="startDate">Start Date:</label>
+                <input
+                    type="date"
+                    id="startDate" />
+                <label for="endDate">End Date:</label>
+                <input
+                    type="date"
+                    id="endDate" />
+                <button id="applyFilter">Apply Filter</button>
+            </div>
+
+            <canvas id="dValueChart"></canvas>
+            <div id="status">Loading data...</div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
