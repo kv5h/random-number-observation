@@ -8,8 +8,8 @@ import datetime
 dynamodb = boto3.resource(
     "dynamodb",
     region_name=os.environ.get("NETLIFY_AWS_REGION"),
-    aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-    aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+    aws_access_key_id=os.environ.get("NETLIFY_AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.environ.get("NETLIFY_AWS_SECRET_ACCESS_KEY"),
 )
 table_name = os.environ.get("DYNAMODB_TABLE_NAME")
 table = dynamodb.Table(table_name)
