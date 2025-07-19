@@ -14,10 +14,9 @@ const tableName = process.env.DYNAMODB_TABLE_NAME;
 export const handler: Handler = async (event: APIGatewayEvent, context: Context) => {
     try {
         if (event.httpMethod !== 'GET') {
-            // Only allow GET method. Add handling for OPTIONS method if needed.
             return {
                 statusCode: 405,
-                headers: { 'Access-Control-Allow-Origin': '*' }, // Return '*' for OPTIONS requests, etc.
+                headers: { 'Access-Control-Allow-Origin': '*' },
                 body: JSON.stringify({ error: 'Method Not Allowed' }),
             };
         }
@@ -51,7 +50,7 @@ export const handler: Handler = async (event: APIGatewayEvent, context: Context)
             TableName: tableName,
             KeyConditionExpression: 'recordType = :rt AND #ts BETWEEN :startTs AND :endTs',
             ExpressionAttributeNames: {
-                '#ts': 'timestamp',
+                '#ts': 'timestamp', // Use alias for 'timestamp' in case it is a reserved word
             },
             ExpressionAttributeValues: {
                 ':rt': 'D_VALUE_RECORD',
@@ -68,41 +67,18 @@ export const handler: Handler = async (event: APIGatewayEvent, context: Context)
             d_value: item.d_value,
         }));
 
-        // Sort by timestamp
+        // Sort by timestamp (DynamoDB Query sorts by sort key, but do it just in case)
         formattedData.sort((a, b) => {
             if (a.timestamp < b.timestamp) return -1;
             if (a.timestamp > b.timestamp) return 1;
             return 0;
         });
 
-        // === CORS origin check ===
-        const origin = event.headers.origin || '';
-        let allowOrigin: string | undefined;
-
-        // Allow requests only from *.netlify.app and localhost
-        if (
-            origin.endsWith('.netlify.app') ||
-            origin.startsWith('http://localhost:') ||
-            origin.startsWith('https://localhost:')
-        ) {
-            allowOrigin = origin;
-        } else {
-            // Return 403 Forbidden for requests from disallowed origins
-            console.warn(`Forbidden access from origin: ${origin}`);
-            return {
-                statusCode: 403,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ error: 'Forbidden: Origin not allowed', requestedOrigin: origin }),
-            };
-        }
-
         return {
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': allowOrigin,
+                'Access-Control-Allow-Origin': '*', // In production, restrict to frontend domain
                 'Access-Control-Allow-Methods': 'GET',
                 'Access-Control-Allow-Headers': 'Content-Type',
             },
