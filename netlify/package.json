@@ -1,0 +1,15 @@
+{
+    "name": "randomness-d-value-frontend",
+    "version": "1.0.0",
+    "description": "Frontend for displaying randomness D-values",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "typescript": "^5.0.0"
+    }
+}
