@@ -68,26 +68,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 chartInstance = null;
             }
 
-            // Create data points with x,y format for time series
-            const dataPoints = timestamps.map((timestamp, index) => ({
-                x: timestamp,
-                y: dValues[index]
-            }));
-
             chartInstance = new Chart(chartCanvas, {
                 type: 'line',
                 data: {
+                    labels: timestamps,
                     datasets: [
                         {
                             label: 'Randomness Bias (D value)',
-                            data: dataPoints,
+                            data: dValues,
                             borderColor: 'rgb(75, 192, 192)',
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             tension: 0.1,
                             fill: false,
-                            showLine: true,
-                            pointRadius: 3,
-                            pointHoverRadius: 5,
                         },
                     ],
                 },
