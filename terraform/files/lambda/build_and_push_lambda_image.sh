@@ -19,7 +19,7 @@ aws ecr get-login-password | docker login --username AWS --password-stdin "${ECR
 ECR_FULL_IMAGE_NAME="${ECR_REPO_URI}:${IMAGE_TAG}"
 
 echo "Building Docker image: ${ECR_FULL_IMAGE_NAME}"
-docker build --provenance=false -t "${ECR_FULL_IMAGE_NAME}" .
+docker build --provenance=false --no-cache -t "${ECR_FULL_IMAGE_NAME}" .
 
 echo "Pushing Docker image to ECR..."
 docker push "${ECR_FULL_IMAGE_NAME}"
