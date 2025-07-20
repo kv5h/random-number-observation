@@ -68,18 +68,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 chartInstance = null;
             }
 
+            // Create data points array for Chart.js line graph
+            const dataPoints = timestamps.map((timestamp, index) => ({
+                x: timestamp,
+                y: dValues[index]
+            }));
+
             chartInstance = new Chart(chartCanvas, {
                 type: 'line',
                 data: {
-                    labels: timestamps,
                     datasets: [
                         {
                             label: 'Randomness Bias (D value)',
-                            data: dValues,
+                            data: dataPoints,
                             borderColor: 'rgb(75, 192, 192)',
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             tension: 0.1,
                             fill: false,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
                         },
                     ],
                 },
@@ -91,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             type: 'time',
                             time: {
                                 displayFormats: {
-                                    hour: 'MM/dd HH:mm',
-                                    day: 'MM/dd',
+                                    hour: 'MM/dd HHmm',
+                                    day: 'MM/dd HHmm',
                                     week: 'MM/dd',
                                     month: 'yyyy/MM'
                                 },
@@ -105,8 +112,17 @@ document.addEventListener('DOMContentLoaded', () => {
                             ticks: {
                                 autoSkip: true,
                                 maxTicksLimit: 10,
-                                maxRotation: 45,
-                                minRotation: 0
+                                maxRotation: 90,
+                                minRotation: 90,
+                                callback: function(value, index, values) {
+                                    // Format as MM/dd HHmm
+                                    const date = new Date(value);
+                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                    const day = String(date.getDate()).padStart(2, '0');
+                                    const hours = String(date.getHours()).padStart(2, '0');
+                                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                                    return `${month}/${day} ${hours}${minutes}`;
+                                }
                             }
                         },
                         y: {
