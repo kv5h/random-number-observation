@@ -48,13 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const labels = data.map((item) => new Date(item.timestamp).toLocaleString());
+            // Convert timestamps to Date objects for x-axis
+            const timestamps = data.map((item) => new Date(item.timestamp));
             const dValues = data.map((item) => item.d_value);
 
-            // y-axis max is always 1.0 to prevent resizing issues
-            const yAxisMax = 1.0;
+            // Set y-axis max to the smaller of (max D value + margin) or 1.0
+            let maxDValue = Math.max(...dValues);
+            let yAxisMax = Math.min(1.0, Math.ceil((maxDValue + 0.05) * 100) / 100);
+            // If all data is zero, set a minimum y-axis max
+            if (!isFinite(yAxisMax) || yAxisMax <= 0) {
+                yAxisMax = 0.1;
+            }
 
-            // Fix chart width and height to prevent resizing issues
             chartCanvas.width = 800;
             chartCanvas.height = 400;
 
@@ -66,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             chartInstance = new Chart(chartCanvas, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: timestamps,
                     datasets: [
                         {
                             label: 'Randomness Bias (D value)',
@@ -83,10 +88,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     maintainAspectRatio: false,
                     scales: {
                         x: {
+                            type: 'time',
+                            time: {
+                                displayFormats: {
+                                    hour: 'MM/dd HH:mm',
+                                    day: 'MM/dd',
+                                    week: 'MM/dd',
+                                    month: 'yyyy/MM'
+                                },
+                                tooltipFormat: 'yyyy/MM/dd HH:mm:ss'
+                            },
                             title: {
                                 display: true,
                                 text: 'Measurement DateTime',
                             },
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 10,
+                                maxRotation: 45,
+                                minRotation: 0
+                            }
                         },
                         y: {
                             title: {
