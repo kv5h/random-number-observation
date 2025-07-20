@@ -51,9 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const labels = data.map((item) => new Date(item.timestamp).toLocaleString());
             const dValues = data.map((item) => item.d_value);
 
-            // Calculate the max D value in the selected period, set y-axis max accordingly (with margin, but never above 1.0)
-            const maxDValue = Math.max(...dValues);
-            const yAxisMax = Math.min(1.0, Math.ceil((maxDValue + 0.05) * 100) / 100);
+            // y-axis max is always 1.0 to prevent resizing issues
+            const yAxisMax = 1.0;
 
             if (chartInstance) {
                 chartInstance.destroy();
