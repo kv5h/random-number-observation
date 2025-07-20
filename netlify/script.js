@@ -109,12 +109,23 @@ document.addEventListener('DOMContentLoaded', () => {
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             tension: 0.1,
                             fill: false,
+                            pointRadius: 4, // Make points visible
+                            pointHoverRadius: 6, // Larger hover area
+                            pointBackgroundColor: 'rgb(75, 192, 192)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHitRadius: 10, // Increase clickable/hoverable area
                         },
                     ],
                 },
                 options: {
                     responsive: false, // Disable responsiveness to fix chart size
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
                     scales: {
                         x: {
                             type: 'time',
