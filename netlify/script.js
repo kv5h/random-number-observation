@@ -54,8 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // y-axis max is always 1.0 to prevent resizing issues
             const yAxisMax = 1.0;
 
+            // Fix chart width and height to prevent resizing issues
+            chartCanvas.width = 800;
+            chartCanvas.height = 400;
+
             if (chartInstance) {
                 chartInstance.destroy();
+                chartInstance = null;
             }
 
             chartInstance = new Chart(chartCanvas, {
@@ -74,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ],
                 },
                 options: {
-                    responsive: true,
+                    responsive: false, // Disable responsiveness to fix chart size
                     maintainAspectRatio: false,
                     scales: {
                         x: {
