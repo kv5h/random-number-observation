@@ -103,8 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 text: 'Measurement DateTime',
                             },
                             ticks: {
-                                source: 'data', // Use actual data points for ticks
-                                autoSkip: false, // Show all data point labels
+                                source: 'auto', // Let Chart.js automatically generate appropriate ticks
+                                autoSkip: true, // Allow skipping for better display
                                 maxRotation: 90,
                                 minRotation: 90,
                                 callback: function(value, index, values) {
@@ -132,6 +132,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     plugins: {
                         tooltip: {
                             callbacks: {
+                                title: function(tooltipItems) {
+                                    // Format timestamp for tooltip title
+                                    const date = new Date(tooltipItems[0].parsed.x);
+                                    const year = date.getFullYear();
+                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                    const day = String(date.getDate()).padStart(2, '0');
+                                    const hours = String(date.getHours()).padStart(2, '0');
+                                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                                    const seconds = String(date.getSeconds()).padStart(2, '0');
+                                    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+                                },
                                 label: function (context) {
                                     return `D value: ${context.parsed.y.toFixed(4)}`;
                                 },
