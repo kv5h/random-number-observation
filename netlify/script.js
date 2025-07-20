@@ -49,8 +49,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Convert timestamps to Date objects for x-axis
-            const timestamps = data.map((item) => new Date(item.timestamp));
+            // Handle various timestamp formats including "2025-07-20T11:45:04+00:00Z"
+            const timestamps = data.map((item) => {
+                let timestamp = item.timestamp;
+
+                // Handle the unusual format with both timezone offset and Z
+                if (timestamp.includes('+') && timestamp.endsWith('Z')) {
+                    // Remove the trailing 'Z' when there's already a timezone offset
+                    timestamp = timestamp.slice(0, -1);
+                } else if (timestamp.includes('+') || timestamp.includes('-')) {
+                    // If it has timezone offset but no Z, use as is
+                    timestamp = timestamp;
+                } else if (!timestamp.endsWith('Z')) {
+                    // If no timezone info, assume UTC
+                    timestamp = timestamp + 'Z';
+                }
+
+                const date = new Date(timestamp);
+
+                // Check if date is valid
+                if (isNaN(date.getTime())) {
+                    console.error('Invalid timestamp:', item.timestamp);
+                    return new Date(); // Return current date as fallback
+                }
+
+                return date;
+            });
             const dValues = data.map((item) => item.d_value);
+
+            // Log for debugging
+            console.log('Parsed timestamps:', timestamps);
+            console.log('D values:', dValues);
 
             // Set y-axis max to the smaller of (max D value + margin) or 1.0
             let maxDValue = Math.max(...dValues);
@@ -103,8 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 text: 'Measurement DateTime',
                             },
                             ticks: {
-                                source: 'auto', // Let Chart.js automatically generate appropriate ticks
-                                autoSkip: true, // Allow skipping for better display
+                                source: 'data', // Only show ticks where data exists
+                                autoSkip: false, // Don't skip any data points
                                 maxRotation: 90,
                                 minRotation: 90,
                                 callback: function(value, index, values) {
