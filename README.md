@@ -21,10 +21,6 @@ This project observes and analyzes the bias of random numbers using the Kolmogor
 2. Build and push the Lambda container image
 3. Access the frontend to view D value trends and filter by date
 
-## Web page
-
-[https://gentle-chaja-22cdf5.netlify.app/](https://gentle-chaja-22cdf5.netlify.app/)
-
 ## License
 
 MIT
