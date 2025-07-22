@@ -89,13 +89,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 yAxisMax = 0.1;
             }
 
-            chartCanvas.width = 800;
-            chartCanvas.height = 400;
-
             if (chartInstance) {
                 chartInstance.destroy();
                 chartInstance = null;
             }
+
+            // Determine the appropriate time unit based on the number of data points
+            let timeUnit = 'day'; // Default unit
+            if (timestamps.length <= 20) {
+                timeUnit = 'hour';
+            } else if (timestamps.length > 100) {
+                timeUnit = 'week';
+            }
+
+            // Update the time scale configuration
+            const timeScaleOptions = {
+                unit: timeUnit,
+                displayFormats: {
+                    hour: 'yyyy/MM/dd HH:mm',
+                    day: 'yyyy/MM/dd', // Corrected for day unit
+                    week: 'yyyy/MM/dd',
+                    month: 'yyyy/MM',
+                },
+                tooltipFormat: 'yyyy/MM/dd HH:mm:ss',
+            };
 
             chartInstance = new Chart(chartCanvas, {
                 type: 'line',
@@ -119,45 +136,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     ],
                 },
                 options: {
-                    responsive: false, // Disable responsiveness to fix chart size
-                    maintainAspectRatio: false,
+                    responsive: true, // Enable responsiveness
+                    maintainAspectRatio: true, // Maintain aspect ratio
                     interaction: {
-                        mode: 'nearest',
+                        mode: 'nearest', // Reverted to nearest for better time series interaction
                         axis: 'x',
-                        intersect: false
+                        intersect: false,
                     },
                     scales: {
                         x: {
                             type: 'time',
-                            time: {
-                                displayFormats: {
-                                    hour: 'yyyy/MM/dd HH:mm',
-                                    day: 'yyyy/MM/dd HH:mm',
-                                    week: 'yyyy/MM/dd',
-                                    month: 'yyyy/MM'
-                                },
-                                tooltipFormat: 'yyyy/MM/dd HH:mm:ss'
-                            },
+                            time: timeScaleOptions, // Use the dynamically determined options
                             title: {
                                 display: true,
                                 text: 'Measurement DateTime',
                             },
                             ticks: {
-                                source: 'data', // Only show ticks where data exists
-                                autoSkip: false, // Don't skip any data points
-                                maxRotation: 90,
-                                minRotation: 90,
-                                callback: function(value, index, values) {
-                                    // Format as YYYY/MM/DD HH:mm
-                                    const date = new Date(value);
-                                    const year = date.getFullYear();
-                                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                                    const day = String(date.getDate()).padStart(2, '0');
-                                    const hours = String(date.getHours()).padStart(2, '0');
-                                    const minutes = String(date.getMinutes()).padStart(2, '0');
-                                    return `${year}/${month}/${day} ${hours}:${minutes}`;
-                                }
-                            }
+                                source: 'auto', // Let Chart.js auto-skip ticks
+                                maxRotation: 45,
+                                minRotation: 45,
+                                // Removed custom callback, relying on Chart.js formatting based on unit
+                            },
                         },
                         y: {
                             title: {
@@ -172,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     plugins: {
                         tooltip: {
                             callbacks: {
-                                title: function(tooltipItems) {
+                                title: function (tooltipItems) {
                                     // Format timestamp for tooltip title
                                     const date = new Date(tooltipItems[0].parsed.x);
                                     const year = date.getFullYear();
