@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 unit: timeUnit,
                 displayFormats: {
                     hour: 'yyyy/MM/dd HH:mm',
-                    day: 'yyyy/MM/dd', // Corrected for day unit
+                    day: 'yyyy/MM/dd HH:mm',
                     week: 'yyyy/MM/dd',
                     month: 'yyyy/MM',
                 },
@@ -155,7 +155,16 @@ document.addEventListener('DOMContentLoaded', () => {
                                 source: 'auto', // Let Chart.js auto-skip ticks
                                 maxRotation: 45,
                                 minRotation: 45,
-                                // Removed custom callback, relying on Chart.js formatting based on unit
+                                callback: function (value, index, ticks) {
+                                    // Simple callback to ensure labels are displayed
+                                    const date = new Date(value);
+                                    const year = date.getFullYear();
+                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                    const day = String(date.getDate()).padStart(2, '0');
+                                    const hours = String(date.getHours()).padStart(2, '0');
+                                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                                    return `${year}/${month}/${day} ${hours}:${minutes}`;
+                                },
                             },
                         },
                         y: {
