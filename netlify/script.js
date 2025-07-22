@@ -94,6 +94,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 chartInstance = null;
             }
 
+            // Determine the appropriate time unit based on the number of data points
+            let timeUnit = 'day'; // Default unit
+            if (timestamps.length <= 20) {
+                timeUnit = 'hour';
+            } else if (timestamps.length > 100) {
+                timeUnit = 'week';
+            }
+
+            // Update the time scale configuration
+            const timeScaleOptions = {
+                unit: timeUnit,
+                displayFormats: {
+                    hour: 'yyyy/MM/dd HH:mm',
+                    day: 'yyyy/MM/dd HH:mm',
+                    week: 'yyyy/MM/dd',
+                    month: 'yyyy/MM',
+                },
+                tooltipFormat: 'yyyy/MM/dd HH:mm:ss',
+            };
+
             chartInstance = new Chart(chartCanvas, {
                 type: 'line',
                 data: {
@@ -117,39 +137,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 options: {
                     responsive: true, // Enable responsiveness
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true, // Maintain aspect ratio
                     interaction: {
-                        mode: 'nearest',
+                        mode: 'nearest', // Reverted to nearest for better time series interaction
                         axis: 'x',
                         intersect: false,
                     },
                     scales: {
                         x: {
                             type: 'time',
-                            time: {
-                                displayFormats: {
-                                    hour: 'yyyy/MM/dd HH:mm',
-                                    day: 'yyyy/MM/dd HH:mm',
-                                    week: 'yyyy/MM/dd',
-                                    month: 'yyyy/MM',
-                                },
-                                tooltipFormat: 'yyyy/MM/dd HH:mm:ss',
-                            },
+                            time: timeScaleOptions, // Use the dynamically determined options
                             title: {
                                 display: true,
                                 text: 'Measurement DateTime',
                             },
                             ticks: {
-                                source: 'auto', // Let Chart.js decide tick placement
-                                autoSkip: true, // Enable auto skipping
+                                source: 'auto', // Let Chart.js auto-skip ticks
                                 maxRotation: 45,
-                                minRotation: 0,
-                                callback: function (value, index, values) {
-                                    // Dynamically show only a reasonable number of labels
-                                    const total = values.length;
-                                    let step = 1;
-                                    if (total > 12) step = Math.ceil(total / 12); // Show max 12 labels
-                                    if (index % step !== 0) return '';
+                                minRotation: 45,
+                                callback: function (value, index, ticks) {
+                                    // Simple callback to ensure labels are displayed
                                     const date = new Date(value);
                                     const year = date.getFullYear();
                                     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -178,10 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                     const date = new Date(tooltipItems[0].parsed.x);
                                     const year = date.getFullYear();
                                     const month = String(date.getMonth() + 1).padStart(2, '0');
-                                    const day = date.getDate().toString().padStart(2, '0');
-                                    const hours = date.getHours().toString().padStart(2, '0');
-                                    const minutes = date.getMinutes().toString().padStart(2, '0');
-                                    const seconds = date.getSeconds().toString().padStart(2, '0');
+                                    const day = String(date.getDate()).padStart(2, '0');
+                                    const hours = String(date.getHours()).padStart(2, '0');
+                                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                                    const seconds = String(date.getSeconds()).padStart(2, '0');
                                     return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
                                 },
                                 label: function (context) {
